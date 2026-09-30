@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Checkout | PageTurner Books{% endblock %}
+
+{% block content %}
+<section class="container page-section">
+    <div class="page-title">
+        <p class="eyebrow dark">SECURE CHECKOUT</p>
+        <h1>Complete your order</h1>
+    </div>
+
+    <div class="checkout-layout">
+        <form class="form-card" method="post" id="checkoutForm">
+            <h2>Delivery Details</h2>
+
+            <div class="form-group">
+                <label for="customer_name">Full Name</label>
+                <input id="customer_name" name="customer_name" type="text"
+                       placeholder="Enter your full name" required
+                       value="{{ request.form.get('customer_name', '') }}">
+            </div>
+
+            <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <input id="phone" name="phone" type="tel"
+                       inputmode="numeric" maxlength="10"
+                       placeholder="10-digit phone number" required
+                       value="{{ request.form.get('phone', '') }}">
+                <small id="phoneError" class="field-error"></small>
+            </div>
+
+            <div class="form-group">
+                <label for="address">Delivery Address</label>
+                <textarea id="address" name="address" rows="5"
+                          placeholder="House number, street, city, state, PIN code"
+                          required>{{ request.form.get('address', '') }}</textarea>
+            </div>
+
+            <button class="btn btn-primary full" type="submit">Place Order</button>
+        </form>
+
+        <aside class="summary-card">
+            <h2>Your Order</h2>
+            {% for item in items %}
+            <div class="checkout-item">
+                <div>
+                    <strong>{{ item['book']['title'] }}</strong>
+                    <small>Qty: {{ item['quantity'] }}</small>
+                </div>
+                <span>₹{{ '%.2f'|format(item['subtotal']) }}</span>
+            </div>
+            {% endfor %}
+            <div class="summary-row total-row">
+                <strong>Total</strong>
+                <strong>₹{{ '%.2f'|format(total) }}</strong>
+            </div>
+        </aside>
+    </div>
+</section>
+{% endblock %}

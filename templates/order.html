@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Order #{{ order['id'] }} | PageTurner Books{% endblock %}
+
+{% block content %}
+<section class="container page-section">
+    <div class="confirmation">
+        <div class="success-icon">✓</div>
+        <p class="eyebrow dark">ORDER CONFIRMED</p>
+        <h1>Thank you, {{ order['customer_name'] }}!</h1>
+        <p>Your order <strong>#{{ order['id'] }}</strong> has been placed successfully.</p>
+    </div>
+
+    <div class="confirmation-card">
+        <div class="confirmation-header">
+            <div>
+                <h2>Order #{{ order['id'] }}</h2>
+                <p>{{ order['created_at'] }}</p>
+            </div>
+            <strong class="confirmation-total">₹{{ '%.2f'|format(order['total']) }}</strong>
+        </div>
+
+        <div class="address-box">
+            <strong>Delivery to</strong>
+            <p>{{ order['customer_name'] }} · {{ order['phone'] }}</p>
+            <p>{{ order['address'] }}</p>
+        </div>
+
+        <h3>Items</h3>
+        <div class="order-table">
+            {% for item in items %}
+            <div class="order-row">
+                <div>
+                    <strong>{{ item['title'] }}</strong>
+                    <small>by {{ item['author'] }}</small>
+                </div>
+                <span>{{ item['quantity'] }} × ₹{{ '%.2f'|format(item['price']) }}</span>
+                <strong>₹{{ '%.2f'|format(item['price'] * item['quantity']) }}</strong>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="confirmation-actions">
+            <a class="btn btn-primary" href="{{ url_for('home') }}">Continue Shopping</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Not Found | PageTurner Books{% endblock %}
+
+{% block content %}
+<section class="container page-section">
+    <div class="empty-state">
+        <div class="empty-icon">📕</div>
+        <h1>Page not found</h1>
+        <p>The page or book you requested does not exist.</p>
+        <a class="btn btn-primary" href="{{ url_for('home') }}">Back to Home</a>
+    </div>
+</section>
+{% endblock %}

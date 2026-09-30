@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}Home | PageTurner Books{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero-content">
+        <p class="eyebrow">WELCOME TO PAGETURNER</p>
+        <h1>Find your next<br><span>great read.</span></h1>
+        <p>Explore stories, ideas and knowledge from our carefully selected collection of books.</p>
+        <a class="btn btn-light" href="#books">Browse Books ↓</a>
+    </div>
+    <div class="hero-book">📖</div>
+</section>
+
+<section class="container" id="books">
+    <div class="section-heading">
+        <div>
+            <p class="eyebrow dark">OUR COLLECTION</p>
+            <h2>Books for every reader</h2>
+        </div>
+        <div class="search-box">
+            <span>🔎</span>
+            <input type="search" id="bookSearch" placeholder="Search title or author..." autocomplete="off">
+        </div>
+    </div>
+
+    <div class="category-row">
+        <a class="category-btn {% if not selected_category %}active{% endif %}"
+           href="{{ url_for('home') }}">All</a>
+        {% for category in categories %}
+            <a class="category-btn {% if selected_category == category['category'] %}active{% endif %}"
+               href="{{ url_for('home', category=category['category']) }}">
+                {{ category['category'] }}
+            </a>
+        {% endfor %}
+    </div>
+
+    <div class="no-search" id="noSearch" hidden>No books match your search.</div>
+
+    <div class="book-grid" id="bookGrid">
+        {% for book in books %}
+        <article class="book-card"
+                 data-title="{{ book['title']|lower }}"
+                 data-author="{{ book['author']|lower }}">
+            <a href="{{ url_for('book_detail', book_id=book['id']) }}" class="cover-link">
+                <div class="book-cover" style="--cover: {{ book['cover_color'] }}">
+                    <span class="cover-category">{{ book['category'] }}</span>
+                    <strong>{{ book['title'] }}</strong>
+                    <small>{{ book['author'] }}</small>
+                    <span class="cover-lines"></span>
+                </div>
+            </a>
+
+            <div class="book-info">
+                <span class="tag">{{ book['category'] }}</span>
+                <h3>{{ book['title'] }}</h3>
+                <p class="author">by {{ book['author'] }}</p>
+                <div class="book-bottom">
+                    <strong class="price">₹{{ '%.2f'|format(book['price']) }}</strong>
+                    {% if book['stock'] > 0 %}
+                        <form action="{{ url_for('add_to_cart', book_id=book['id']) }}" method="post">
+                            <button class="btn btn-primary small" type="submit">Add to Cart</button>
+                        </form>
+                    {% else %}
+                        <span class="out-stock">Out of stock</span>
+                    {% endif %}
+                </div>
+            </div>
+        </article>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

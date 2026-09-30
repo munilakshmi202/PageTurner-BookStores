@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}{{ book['title'] }} | PageTurner Books{% endblock %}
+
+{% block content %}
+<section class="container detail-page">
+    <a class="back-link" href="{{ url_for('home') }}">← Back to books</a>
+
+    <div class="detail-card">
+        <div class="detail-cover book-cover" style="--cover: {{ book['cover_color'] }}">
+            <span class="cover-category">{{ book['category'] }}</span>
+            <strong>{{ book['title'] }}</strong>
+            <small>{{ book['author'] }}</small>
+            <span class="cover-lines"></span>
+        </div>
+
+        <div class="detail-content">
+            <span class="tag">{{ book['category'] }}</span>
+            <h1>{{ book['title'] }}</h1>
+            <p class="detail-author">by <strong>{{ book['author'] }}</strong></p>
+
+            <p class="description">{{ book['description'] }}</p>
+
+            <div class="detail-price">₹{{ '%.2f'|format(book['price']) }}</div>
+
+            {% if book['stock'] > 0 %}
+                <p class="stock in-stock">● {{ book['stock'] }} copies available</p>
+                <form action="{{ url_for('add_to_cart', book_id=book['id']) }}" method="post">
+                    <button class="btn btn-primary" type="submit">Add to Cart</button>
+                </form>
+            {% else %}
+                <p class="stock out-stock">● Out of stock</p>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}
