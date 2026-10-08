@@ -1,0 +1,214 @@
+{% extends "base.html" %}
+
+{% block title %}Order Confirmation | PageTurner Books{% endblock %}
+
+{% block content %}
+
+<section class="page-section">
+    <div class="container">
+
+        <div
+            style="
+                max-width: 800px;
+                margin: 0 auto;
+                text-align: center;
+            "
+        >
+
+            <div
+                style="
+                    font-size: 70px;
+                    margin-bottom: 20px;
+                "
+            >
+                ✓
+            </div>
+
+            <p class="eyebrow dark">
+                ORDER PLACED SUCCESSFULLY
+            </p>
+
+            <h1>
+                Thank You for Your Order!
+            </h1>
+
+            <p
+                style="
+                    color: #64748b;
+                    margin-top: 10px;
+                "
+            >
+                Your order has been successfully placed.
+            </p>
+
+            <div
+                class="review-card"
+                style="
+                    margin-top: 35px;
+                    text-align: left;
+                "
+            >
+
+                <div
+                    style="
+                        display: flex;
+                        justify-content: space-between;
+                        gap: 15px;
+                        flex-wrap: wrap;
+                        margin-bottom: 25px;
+                    "
+                >
+
+                    <div>
+                        <p
+                            style="
+                                color: #64748b;
+                                margin-bottom: 5px;
+                            "
+                        >
+                            Order ID
+                        </p>
+
+                        <h2>
+                            #{{ order['id'] }}
+                        </h2>
+                    </div>
+
+                    <div style="text-align: right;">
+
+                        <p
+                            style="
+                                color: #64748b;
+                                margin-bottom: 5px;
+                            "
+                        >
+                            Order Date
+                        </p>
+
+                        <strong>
+                            {{ order['created_at'] }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+                <hr style="margin: 20px 0;">
+
+                <h3 style="margin-bottom: 15px;">
+                    Delivery Details
+                </h3>
+
+                <p style="margin-bottom: 8px;">
+                    <strong>Name:</strong>
+                    {{ order['customer_name'] }}
+                </p>
+
+                <p style="margin-bottom: 8px;">
+                    <strong>Phone:</strong>
+                    {{ order['phone'] }}
+                </p>
+
+                <p style="margin-bottom: 8px;">
+                    <strong>Address:</strong>
+                    {{ order['address'] }}
+                </p>
+
+                <hr style="margin: 25px 0;">
+
+                <h3 style="margin-bottom: 15px;">
+                    Ordered Books
+                </h3>
+
+                {% for item in items %}
+
+                <div
+                    style="
+                        display: flex;
+                        justify-content: space-between;
+                        gap: 15px;
+                        padding: 14px 0;
+                        border-bottom: 1px solid #e2e8f0;
+                    "
+                >
+
+                    <div>
+
+                        <strong>
+                            {{ item['title'] }}
+                        </strong>
+
+                        <p
+                            style="
+                                color: #64748b;
+                                margin-top: 5px;
+                                font-size: 14px;
+                            "
+                        >
+                            by {{ item['author'] }}
+                            · Qty: {{ item['quantity'] }}
+                        </p>
+
+                    </div>
+
+                    <strong>
+                        ₹{{ '%.2f'|format(item['price'] * item['quantity']) }}
+                    </strong>
+
+                </div>
+
+                {% endfor %}
+
+                <div
+                    style="
+                        display: flex;
+                        justify-content: space-between;
+                        margin-top: 25px;
+                        font-size: 22px;
+                    "
+                >
+
+                    <strong>
+                        Total
+                    </strong>
+
+                    <strong>
+                        ₹{{ '%.2f'|format(order['total']) }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+            <div
+                style="
+                    display: flex;
+                    justify-content: center;
+                    gap: 12px;
+                    flex-wrap: wrap;
+                    margin-top: 30px;
+                "
+            >
+
+                <a
+                    href="{{ url_for('home') }}"
+                    class="btn btn-primary"
+                >
+                    Continue Shopping
+                </a>
+
+                <a
+                    href="{{ url_for('find_order') }}"
+                    class="btn"
+                >
+                    Find My Order
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

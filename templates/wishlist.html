@@ -1,0 +1,220 @@
+{% extends "base.html" %}
+
+{% block title %}Wishlist | PageTurner Books{% endblock %}
+
+{% block content %}
+
+<section class="page-section">
+
+    <div class="container">
+
+        <div class="section-heading">
+
+            <div>
+                <p class="eyebrow dark">YOUR COLLECTION</p>
+
+                <h1>My Wishlist</h1>
+
+                <p style="color: #64748b; margin-top: 8px;">
+                    Books you saved for later.
+                </p>
+            </div>
+
+        </div>
+
+
+        {% if books %}
+
+        <div class="book-grid">
+
+            {% for book in books %}
+
+            <article class="book-card">
+
+                <a
+                    href="{{ url_for('book_detail', book_id=book['id']) }}"
+                    class="cover-link"
+                >
+
+                    <div
+                        class="book-cover {% if book['image'] %}has-image{% endif %}"
+                        style="--cover: {{ book['cover_color'] or '#4f46e5' }}"
+                    >
+
+                        {% if book['image'] %}
+
+                        <img
+                            src="{{ book['image'] }}"
+                            alt="{{ book['title'] }}"
+                            class="book-image"
+                            onerror="this.style.display='none'; this.parentElement.classList.remove('has-image');"
+                        >
+
+                        {% endif %}
+
+
+                        <div class="cover-content">
+
+                            <span class="cover-category">
+                                {{ book['category'] }}
+                            </span>
+
+                            <strong>
+                                {{ book['title'] }}
+                            </strong>
+
+                            <small>
+                                {{ book['author'] }}
+                            </small>
+
+                            <span class="cover-lines"></span>
+
+                        </div>
+
+                    </div>
+
+                </a>
+
+
+                <div class="book-info">
+
+                    <span class="tag">
+                        {{ book['category'] }}
+                    </span>
+
+
+                    <h3>
+                        {{ book['title'] }}
+                    </h3>
+
+
+                    <p class="author">
+                        by {{ book['author'] }}
+                    </p>
+
+
+                    <div class="book-bottom">
+
+                        <strong class="price">
+                            ₹{{ '%.2f'|format(book['price']) }}
+                        </strong>
+
+
+                        <div
+                            style="
+                                display: flex;
+                                gap: 8px;
+                                align-items: center;
+                            "
+                        >
+
+                            <form
+                                action="{{ url_for('remove_from_wishlist', book_id=book['id']) }}"
+                                method="post"
+                            >
+
+                                <button
+                                    type="submit"
+                                    class="btn small"
+                                    title="Remove from Wishlist"
+                                    style="
+                                        font-size: 18px;
+                                        padding: 8px 10px;
+                                    "
+                                >
+                                    ❤️
+                                </button>
+
+                            </form>
+
+
+                            {% if book['stock'] > 0 %}
+
+                            <form
+                                action="{{ url_for('add_to_cart', book_id=book['id']) }}"
+                                method="post"
+                            >
+
+                                <button
+                                    type="submit"
+                                    class="btn btn-primary small"
+                                >
+                                    Add to Cart
+                                </button>
+
+                            </form>
+
+                            {% else %}
+
+                            <span class="out-stock">
+                                Out of stock
+                            </span>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </article>
+
+            {% endfor %}
+
+        </div>
+
+
+        {% else %}
+
+        <div
+            class="login-card"
+            style="
+                max-width: 650px;
+                margin: 40px auto;
+                padding: 50px;
+                text-align: center;
+            "
+        >
+
+            <div
+                style="
+                    font-size: 60px;
+                    margin-bottom: 15px;
+                "
+            >
+                ♡
+            </div>
+
+
+            <h2>
+                Your Wishlist is Empty
+            </h2>
+
+
+            <p
+                style="
+                    color: #64748b;
+                    margin: 12px 0 25px;
+                "
+            >
+                You haven't added any books to your wishlist yet.
+            </p>
+
+
+            <a
+                href="{{ url_for('home') }}"
+                class="btn btn-primary"
+            >
+                Browse Books
+            </a>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</section>
+
+{% endblock %}

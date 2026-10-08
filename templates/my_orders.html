@@ -1,0 +1,272 @@
+{% extends "base.html" %}
+
+{% block title %}My Orders | PageTurner Books{% endblock %}
+
+{% block content %}
+
+<section class="page-section">
+    <div class="container">
+
+        <div class="section-heading">
+            <div>
+                <p class="eyebrow dark">ORDER HISTORY</p>
+                <h1>My Orders</h1>
+                <p style="color: #64748b; margin-top: 8px;">
+                    View all the orders placed from your account.
+                </p>
+            </div>
+
+            <a href="{{ url_for('home') }}" class="btn">
+                ← Continue Shopping
+            </a>
+        </div>
+
+        {% if orders %}
+
+        <div style="display: grid; gap: 20px;">
+
+            {% for order in orders %}
+
+            <div class="review-card">
+
+                <div
+                    style="
+                        display: flex;
+                        justify-content: space-between;
+                        gap: 15px;
+                        flex-wrap: wrap;
+                    "
+                >
+
+                    <div>
+                        <p
+                            style="
+                                color: #64748b;
+                                font-size: 14px;
+                                margin-bottom: 5px;
+                            "
+                        >
+                            Order ID
+                        </p>
+
+                        <h2>
+                            #{{ order['order_id'] }}
+                        </h2>
+                    </div>
+
+                    <div style="text-align: right;">
+
+                        <p
+                            style="
+                                color: #64748b;
+                                font-size: 14px;
+                                margin-bottom: 5px;
+                            "
+                        >
+                            Order Date
+                        </p>
+
+                        <strong>
+                            {{ order['created_at'] }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+                <hr style="margin: 20px 0;">
+
+                <div
+                    style="
+                        display: grid;
+                        grid-template-columns: repeat(
+                            auto-fit,
+                            minmax(180px, 1fr)
+                        );
+                        gap: 18px;
+                    "
+                >
+
+                    <div>
+
+                        <p
+                            style="
+                                color: #64748b;
+                                font-size: 14px;
+                            "
+                        >
+                            Customer
+                        </p>
+
+                        <strong>
+                            {{ order['customer_name'] }}
+                        </strong>
+
+                    </div>
+
+                    <div>
+
+                        <p
+                            style="
+                                color: #64748b;
+                                font-size: 14px;
+                            "
+                        >
+                            Phone
+                        </p>
+
+                        <strong>
+                            {{ order['phone'] }}
+                        </strong>
+
+                    </div>
+
+                    <div>
+
+                        <p
+                            style="
+                                color: #64748b;
+                                font-size: 14px;
+                            "
+                        >
+                            Items
+                        </p>
+
+                        <strong>
+                            {{ order['item_count'] }}
+                        </strong>
+
+                    </div>
+
+                    <div>
+
+                        <p
+                            style="
+                                color: #64748b;
+                                font-size: 14px;
+                            "
+                        >
+                            Total
+                        </p>
+
+                        <strong>
+                            ₹{{ '%.2f'|format(order['total']) }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+                <div style="margin-top: 20px;">
+
+                    <p
+                        style="
+                            color: #64748b;
+                            font-size: 14px;
+                            margin-bottom: 6px;
+                        "
+                    >
+                        Books Ordered
+                    </p>
+
+                    <p style="line-height: 1.7;">
+                        {{ order['book_titles'] }}
+                    </p>
+
+                </div>
+
+                <div style="margin-top: 20px;">
+
+                    <p
+                        style="
+                            color: #64748b;
+                            font-size: 14px;
+                            margin-bottom: 6px;
+                        "
+                    >
+                        Delivery Address
+                    </p>
+
+                    <p style="line-height: 1.7;">
+                        {{ order['address'] }}
+                    </p>
+
+                </div>
+
+                <div
+                    style="
+                        margin-top: 22px;
+                        display: flex;
+                        gap: 10px;
+                        flex-wrap: wrap;
+                    "
+                >
+
+                    <a
+                        href="{{ url_for(
+                            'order_confirmation',
+                            order_id=order['order_id']
+                        ) }}"
+                        class="btn btn-primary"
+                    >
+                        View Order Details
+                    </a>
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        {% else %}
+
+        <div
+            class="review-card"
+            style="
+                max-width: 650px;
+                margin: 0 auto;
+                text-align: center;
+                padding: 60px 25px;
+            "
+        >
+
+            <div
+                style="
+                    font-size: 60px;
+                    margin-bottom: 20px;
+                "
+            >
+                📦
+            </div>
+
+            <h2>
+                No Orders Yet
+            </h2>
+
+            <p
+                style="
+                    color: #64748b;
+                    margin-top: 10px;
+                "
+            >
+                You have not placed any orders yet.
+            </p>
+
+            <a
+                href="{{ url_for('home') }}"
+                class="btn btn-primary"
+                style="margin-top: 22px;"
+            >
+                Browse Books
+            </a>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+</section>
+
+{% endblock %}

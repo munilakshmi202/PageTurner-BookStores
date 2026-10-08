@@ -1,13 +1,79 @@
 {% extends "base.html" %}
-{% block title %}Not Found | PageTurner Books{% endblock %}
+
+{% block title %}Page Not Found | PageTurner Books{% endblock %}
 
 {% block content %}
-<section class="container page-section">
-    <div class="empty-state">
-        <div class="empty-icon">📕</div>
-        <h1>Page not found</h1>
-        <p>The page or book you requested does not exist.</p>
-        <a class="btn btn-primary" href="{{ url_for('home') }}">Back to Home</a>
+
+<section class="page-section">
+    <div class="container">
+
+        <div
+            style="
+                max-width: 650px;
+                margin: 0 auto;
+                text-align: center;
+                padding: 70px 25px;
+            "
+        >
+
+            <div
+                style="
+                    font-size: 90px;
+                    line-height: 1;
+                    margin-bottom: 25px;
+                "
+            >
+                📚
+            </div>
+
+            <p class="eyebrow dark">
+                ERROR 404
+            </p>
+
+            <h1>
+                Page Not Found
+            </h1>
+
+            <p
+                style="
+                    color: #64748b;
+                    margin-top: 12px;
+                    line-height: 1.7;
+                "
+            >
+                Sorry, the page you are looking for
+                does not exist or may have been moved.
+            </p>
+
+            <div
+                style="
+                    display: flex;
+                    justify-content: center;
+                    gap: 12px;
+                    flex-wrap: wrap;
+                    margin-top: 28px;
+                "
+            >
+
+                <a
+                    href="{{ url_for('home') }}"
+                    class="btn btn-primary"
+                >
+                    ← Back to Home
+                </a>
+
+                <a
+                    href="{{ url_for('cart') }}"
+                    class="btn"
+                >
+                    View Cart
+                </a>
+
+            </div>
+
+        </div>
+
     </div>
 </section>
+
 {% endblock %}

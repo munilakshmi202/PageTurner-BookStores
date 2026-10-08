@@ -1,59 +1,420 @@
 {% extends "base.html" %}
+
 {% block title %}Checkout | PageTurner Books{% endblock %}
 
 {% block content %}
-<section class="container page-section">
-    <div class="page-title">
-        <p class="eyebrow dark">SECURE CHECKOUT</p>
-        <h1>Complete your order</h1>
-    </div>
 
-    <div class="checkout-layout">
-        <form class="form-card" method="post" id="checkoutForm">
-            <h2>Delivery Details</h2>
+<section class="page-section">
 
-            <div class="form-group">
-                <label for="customer_name">Full Name</label>
-                <input id="customer_name" name="customer_name" type="text"
-                       placeholder="Enter your full name" required
-                       value="{{ request.form.get('customer_name', '') }}">
+    <div class="container">
+
+        <div style="text-align:center; margin-bottom:40px;">
+
+            <p class="eyebrow dark">
+                SECURE CHECKOUT
+            </p>
+
+            <h1>
+                Complete Your Order
+            </h1>
+
+            <p style="color:#64748b; margin-top:10px;">
+                Enter your delivery details and confirm your order.
+            </p>
+
+        </div>
+
+        <div
+            style="
+                display:grid;
+                grid-template-columns:
+                    minmax(0, 1.5fr)
+                    minmax(300px, 1fr);
+                gap:30px;
+                align-items:start;
+            "
+        >
+
+            <!-- DELIVERY DETAILS -->
+
+            <div class="login-card" style="padding:30px;">
+
+                <h2 style="margin-bottom:25px;">
+                    Delivery Details
+                </h2>
+
+                <form
+                    action="{{ url_for('checkout') }}"
+                    method="POST"
+                >
+
+                    <div class="form-group">
+
+                        <label for="customer_name">
+                            Full Name
+                        </label>
+
+                        <input
+                            type="text"
+                            id="customer_name"
+                            name="customer_name"
+                            placeholder="Enter your full name"
+                            value="{{ request.form.get('customer_name', '') }}"
+                            autocomplete="name"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="phone">
+                            Phone Number
+                        </label>
+
+                        <input
+                            type="tel"
+                            id="phone"
+                            name="phone"
+                            placeholder="Enter your 10 digit phone number"
+                            value="{{ request.form.get('phone', '') }}"
+                            inputmode="numeric"
+                            autocomplete="tel"
+                            maxlength="10"
+                            minlength="10"
+                            pattern="[0-9]{10}"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="address">
+                            Delivery Address
+                        </label>
+
+                        <textarea
+                            id="address"
+                            name="address"
+                            rows="5"
+                            placeholder="Enter your complete delivery address"
+                            required
+                        >{{ request.form.get('address', '') }}</textarea>
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                        style="
+                            width:100%;
+                            margin-top:10px;
+                        "
+                    >
+                        Place Order
+                    </button>
+
+
+                    <a
+                        href="{{ url_for('cart') }}"
+                        class="btn"
+                        style="
+                            width:100%;
+                            margin-top:12px;
+                            text-align:center;
+                            display:block;
+                        "
+                    >
+                        Back to Cart
+                    </a>
+
+                </form>
+
             </div>
 
-            <div class="form-group">
-                <label for="phone">Phone Number</label>
-                <input id="phone" name="phone" type="tel"
-                       inputmode="numeric" maxlength="10"
-                       placeholder="10-digit phone number" required
-                       value="{{ request.form.get('phone', '') }}">
-                <small id="phoneError" class="field-error"></small>
-            </div>
 
-            <div class="form-group">
-                <label for="address">Delivery Address</label>
-                <textarea id="address" name="address" rows="5"
-                          placeholder="House number, street, city, state, PIN code"
-                          required>{{ request.form.get('address', '') }}</textarea>
-            </div>
+            <!-- ORDER SUMMARY -->
 
-            <button class="btn btn-primary full" type="submit">Place Order</button>
-        </form>
+            <div
+                class="login-card"
+                style="
+                    padding:30px;
+                    position:sticky;
+                    top:20px;
+                "
+            >
 
-        <aside class="summary-card">
-            <h2>Your Order</h2>
-            {% for item in items %}
-            <div class="checkout-item">
-                <div>
-                    <strong>{{ item['book']['title'] }}</strong>
-                    <small>Qty: {{ item['quantity'] }}</small>
+                <h2 style="margin-bottom:25px;">
+                    Order Summary
+                </h2>
+
+
+                {% if items %}
+
+                    {% for item in items %}
+
+                        <div
+                            style="
+                                display:flex;
+                                justify-content:space-between;
+                                gap:15px;
+                                padding:15px 0;
+                                border-bottom:1px solid #e2e8f0;
+                            "
+                        >
+
+                            <div style="flex:1;">
+
+                                <strong>
+                                    {{ item['book']['title'] }}
+                                </strong>
+
+                                <p
+                                    style="
+                                        color:#64748b;
+                                        font-size:14px;
+                                        margin-top:5px;
+                                        margin-bottom:5px;
+                                    "
+                                >
+                                    Quantity:
+                                    {{ item['quantity'] }}
+                                </p>
+
+                                <p
+                                    style="
+                                        color:#64748b;
+                                        font-size:14px;
+                                        margin:0;
+                                    "
+                                >
+                                    ₹{{ '%.2f'|format(item['book']['price']) }}
+                                    each
+                                </p>
+
+                            </div>
+
+
+                            <div
+                                style="
+                                    font-weight:700;
+                                    white-space:nowrap;
+                                "
+                            >
+
+                                ₹{{
+                                    '%.2f'|format(
+                                        item['subtotal']
+                                    )
+                                }}
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+
+                {% else %}
+
+                    <p style="color:#64748b;">
+                        No items in your order.
+                    </p>
+
+                {% endif %}
+
+
+                <!-- PRICE DETAILS -->
+
+                <div style="margin-top:25px;">
+
+                    <!-- SUBTOTAL -->
+
+                    <div
+                        style="
+                            display:flex;
+                            justify-content:space-between;
+                            margin-bottom:12px;
+                        "
+                    >
+
+                        <span>
+                            Subtotal
+                        </span>
+
+                        <strong>
+                            ₹{{
+                                '%.2f'|format(subtotal)
+                            }}
+                        </strong>
+
+                    </div>
+
+
+                    <!-- DISCOUNT -->
+
+                    {% if discount_amount and discount_amount > 0 %}
+
+                        <div
+                            style="
+                                display:flex;
+                                justify-content:space-between;
+                                margin-bottom:12px;
+                            "
+                        >
+
+                            <span>
+
+                                Discount
+
+                                {% if discount_percent %}
+
+                                    ({{ discount_percent }}%)
+
+                                {% endif %}
+
+                            </span>
+
+                            <strong style="color:#16a34a;">
+
+                                -₹{{
+                                    '%.2f'|format(
+                                        discount_amount
+                                    )
+                                }}
+
+                            </strong>
+
+                        </div>
+
+                    {% endif %}
+
+
+                    <!-- COUPON -->
+
+                    {% if coupon_code %}
+
+                        <div
+                            style="
+                                background:#f0fdf4;
+                                border:1px solid #bbf7d0;
+                                border-radius:8px;
+                                padding:10px 12px;
+                                margin:15px 0;
+                            "
+                        >
+
+                            <p
+                                style="
+                                    margin:0;
+                                    color:#166534;
+                                    font-size:14px;
+                                "
+                            >
+
+                                Coupon Applied:
+
+                                <strong>
+                                    {{ coupon_code }}
+                                </strong>
+
+                            </p>
+
+                        </div>
+
+                    {% endif %}
+
+
+                    <!-- TOTAL -->
+
+                    <div
+                        style="
+                            display:flex;
+                            justify-content:space-between;
+                            align-items:center;
+                            border-top:2px solid #e2e8f0;
+                            margin-top:20px;
+                            padding-top:20px;
+                        "
+                    >
+
+                        <strong style="font-size:20px;">
+                            Total
+                        </strong>
+
+                        <strong
+                            class="price"
+                            style="font-size:24px;"
+                        >
+
+                            ₹{{
+                                '%.2f'|format(total)
+                            }}
+
+                        </strong>
+
+                    </div>
+
                 </div>
-                <span>₹{{ '%.2f'|format(item['subtotal']) }}</span>
+
+
+                <!-- SECURITY MESSAGE -->
+
+                <div
+                    style="
+                        margin-top:25px;
+                        padding:15px;
+                        background:#f8fafc;
+                        border-radius:8px;
+                    "
+                >
+
+                    <p
+                        style="
+                            margin:0;
+                            color:#64748b;
+                            font-size:13px;
+                            line-height:1.6;
+                        "
+                    >
+
+                        Your order information is securely
+                        processed and your details are used
+                        only for order delivery and tracking.
+
+                    </p>
+
+                </div>
+
             </div>
-            {% endfor %}
-            <div class="summary-row total-row">
-                <strong>Total</strong>
-                <strong>₹{{ '%.2f'|format(total) }}</strong>
-            </div>
-        </aside>
+
+        </div>
+
     </div>
+
 </section>
+
+
+<!-- RESPONSIVE DESIGN -->
+
+<style>
+
+    @media (max-width: 800px) {
+
+        .page-section .container > div {
+            grid-template-columns: 1fr !important;
+        }
+
+        .login-card {
+            position: static !important;
+        }
+
+    }
+
+</style>
+
 {% endblock %}

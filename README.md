@@ -1,165 +1,396 @@
-# PageTurner Books — Online Book Store
+# PageTurner Books
 
-A beginner-friendly online bookstore built with:
+PageTurner Books is an online bookstore application developed using
+Python Flask, SQLite, HTML, CSS and JavaScript.
 
-- Python
-- Flask
-- SQLite
-- HTML
-- CSS
-- JavaScript
-- Jinja templates
+## Technologies Used
 
-## 1. Requirements
+Python
 
-Install Python 3.10 or newer.
+Flask
 
-Flask is the only external Python package used.
+SQLite
 
-## 2. Install Flask
+HTML
 
-Open a terminal in this project folder:
+CSS
 
-```bash
-python -m pip install flask
-```
+JavaScript
 
-On Windows, if `python` does not work, try:
 
-```bash
-py -m pip install flask
-```
+## Main Features
 
-## 3. Run the project
+1. View available books
 
-```bash
+2. Search books by title and author
+
+3. Filter books by category
+
+4. Sort books by title and price
+
+5. Pagination with 6 books per page
+
+6. View book details
+
+7. View stock availability
+
+8. Add books to cart
+
+9. Update cart quantity
+
+10. Remove books from cart
+
+11. Checkout and place orders
+
+12. Automatically reduce stock after purchase
+
+13. Prevent purchasing more books than available stock
+
+14. Add ratings and reviews
+
+15. Find previous orders using phone number
+
+16. Admin login
+
+17. Admin book management
+
+18. Add books
+
+19. Edit books
+
+20. Delete books
+
+21. View admin sales reports
+
+22. Responsive design for desktop and mobile
+
+
+## Project Structure
+
+PageTurner_BookStore
+
+    app.py
+
+    schema.sql
+
+    seed.sql
+
+    bookstore.db
+
+    queries.sql
+
+    README.md
+
+    templates
+
+        base.html
+
+        home.html
+
+        book.html
+
+        cart.html
+
+        checkout.html
+
+        order.html
+
+        find_order.html
+
+        admin_login.html
+
+        admin.html
+
+        admin_book_form.html
+
+        admin_reports.html
+
+        404.html
+
+    static
+
+        style.css
+
+        script.js
+
+
+## Database
+
+The project uses SQLite as the database.
+
+The database file is:
+
+bookstore.db
+
+The main database tables are:
+
+books
+
+orders
+
+order_items
+
+reviews
+
+
+## Books Table
+
+The books table stores:
+
+Book ID
+
+Title
+
+Author
+
+Category
+
+Price
+
+Description
+
+Stock
+
+Cover Color
+
+
+## Orders Table
+
+The orders table stores:
+
+Order ID
+
+Customer Name
+
+Phone
+
+Address
+
+Total
+
+Order Date
+
+
+## Order Items Table
+
+The order_items table stores:
+
+Order ID
+
+Book ID
+
+Quantity
+
+Price
+
+
+## Reviews Table
+
+The reviews table stores:
+
+Book ID
+
+Customer Name
+
+Rating
+
+Comment
+
+Created Date
+
+
+## Stock Management
+
+Stock is checked before adding a book to the cart.
+
+Stock is checked again during checkout.
+
+When an order is successfully placed, the purchased quantity is
+removed from the available stock.
+
+The application prevents the stock from becoming negative.
+
+The checkout process uses a database transaction so that stock
+updates remain safe when multiple customers try to purchase books.
+
+
+## Reviews and Ratings
+
+Customers can submit a rating from 1 to 5.
+
+Customers can also submit a review comment.
+
+The book page displays the average rating and number of reviews.
+
+The average rating is calculated using the SQL AVG function.
+
+
+## Admin Area
+
+The admin area is protected using a session.
+
+The admin password is defined once in app.py using the
+ADMIN_PASSWORD variable.
+
+The password is not stored in the database.
+
+The admin can:
+
+Add books
+
+Edit books
+
+Delete books
+
+View store reports
+
+Logout
+
+
+## Admin Reports
+
+The admin report provides:
+
+Total orders
+
+Total revenue
+
+Total books sold
+
+Best selling books
+
+Orders per category
+
+Books sold per category
+
+Revenue per category
+
+SQL aggregate functions such as COUNT, SUM and GROUP BY are used
+for reporting.
+
+
+## Running the Project
+
+Open the PageTurner_BookStore folder in VS Code.
+
+Open the VS Code terminal.
+
+Run:
+
 python app.py
-```
 
-Then open:
+If python does not work on the system, try:
+
+py app.py
+
+
+## Open the Website
+
+After Flask starts successfully, open the local address shown in
+the terminal.
+
+Usually it is:
 
 http://127.0.0.1:5000
 
-On first startup, Flask creates `bookstore.db`, creates the three tables and inserts the sample books.
 
-## 4. Project structure
+## Database Testing
 
-```text
-PageTurner_BookStore/
-│
-├── app.py
-├── schema.sql
-├── seed.sql
-├── queries.sql
-├── README.md
-├── bookstore.db          # created automatically after first run
-│
-├── templates/
-│   ├── base.html
-│   ├── home.html
-│   ├── book.html
-│   ├── cart.html
-│   ├── checkout.html
-│   ├── order.html
-│   └── 404.html
-│
-└── static/
-    ├── style.css
-    └── script.js
-```
+The SQLite database can be opened using a SQLite database viewer.
 
-## 5. Routes
+The following tables can be checked:
 
-| Route | Purpose | SQL |
-|---|---|---|
-| `/` | Show books and category filter | SELECT books |
-| `/book/<id>` | Show book details | SELECT by id |
-| `/cart/add/<id>` | Add one copy to cart | SELECT book; session update |
-| `/cart` | Show cart and total | SELECT books by IDs |
-| `/cart/update/<id>` | Change quantity | SELECT stock; session update |
-| `/cart/remove/<id>` | Remove a cart item | Session update |
-| `/checkout` | Show checkout and create order | INSERT orders, INSERT order_items, UPDATE books |
-| `/order/<id>` | Show confirmation | SELECT order + JOIN order_items/books |
+books
 
-## 6. Important project concepts
+orders
 
-### Cart
+order_items
 
-The cart is stored in Flask's session:
+reviews
 
-```text
-{
-    "1": 2,
-    "5": 1
-}
-```
 
-The keys are strings because session data is serialized. When querying SQLite, the IDs are converted back to integers.
+## Testing Stock
 
-### Order saving
+Place an order for a book.
 
-Checkout performs these operations:
+Check the books table.
 
-1. Validate customer details.
-2. Recheck stock.
-3. INSERT into `orders`.
-4. Get the new order ID using `lastrowid`.
-5. INSERT each product into `order_items`.
-6. Reduce stock.
-7. Commit the transaction.
-8. Clear the session cart.
-9. Redirect to the confirmation page.
+The stock value should decrease by the purchased quantity.
 
-### SQL safety
+When the stock becomes zero, the website should display:
 
-SQL values are passed with `?` placeholders. This avoids directly inserting user input into SQL statements.
+Out of Stock
 
-## 7. JavaScript features
 
-- Live title/author search
-- Remove confirmation
-- Exactly 10 digit phone validation
-- Green success messages disappear after 3 seconds
-- Mobile navigation menu
+## Testing Reviews
 
-## 8. Test checklist
+Open a book details page.
 
-1. Open home page.
-2. Search for a title or author.
-3. Click a category.
-4. Open a book.
-5. Add a book to cart.
-6. Increase/decrease quantity.
-7. Try quantity `0`.
-8. Remove a book and confirm the browser prompt.
-9. Go to checkout.
-10. Submit blank fields.
-11. Submit an invalid phone number.
-12. Submit a valid 10-digit phone number.
-13. Confirm the order.
-14. Open `bookstore.db` with SQLite tools and check `orders` and `order_items`.
+Submit two different ratings.
 
-## 9. Reset the database
+The average rating should be calculated from the submitted ratings.
 
-Stop Flask, delete `bookstore.db`, then run:
 
-```bash
-python app.py
-```
+## Testing Order History
 
-The database will be recreated from `schema.sql` and `seed.sql`.
+Place an order using a phone number.
 
-## 10. 5-minute demo flow
+Open Find My Order.
 
-- Start the Flask application.
-- Show the home page and responsive book cards.
-- Demonstrate category filtering.
-- Demonstrate live search.
-- Open a book detail page.
-- Add the book to cart.
-- Change quantity and show the total.
-- Go to checkout.
-- Show validation for an incorrect phone number.
-- Place a valid order.
-- Show the confirmation page.
-- Explain that `orders` stores customer/order information and `order_items` stores each book belonging to the order.
+Enter the same phone number.
+
+The previous order should be displayed.
+
+
+## Testing Admin
+
+Open the Admin page.
+
+Enter the admin password.
+
+After successful login, the admin dashboard should be displayed.
+
+Without login, the admin dashboard should redirect to the
+admin login page.
+
+
+## SQL Query File
+
+The queries.sql file contains 8 required SQL queries.
+
+The queries include:
+
+Category filtering
+
+Book searching
+
+Order searching
+
+Out of stock books
+
+Low stock books
+
+Total orders and revenue
+
+Best selling books
+
+Orders per category
+
+
+## Security Practices
+
+SQL values are passed using parameterized queries with ? placeholders.
+
+Database changes use commit.
+
+Database transactions are used during checkout.
+
+Admin access is protected using a session.
+
+The application checks stock before completing an order.
+
+
+## Project Completion
+
+The PageTurner Books project demonstrates a complete online
+bookstore workflow using Flask, SQLite, HTML, CSS and JavaScript.

@@ -1,82 +1,51 @@
-document.addEventListener("DOMContentLoaded", () => {
-    // Live search filters the cards without making another server request.
+document.addEventListener("DOMContentLoaded", function () {
     const searchInput = document.getElementById("bookSearch");
-    const bookCards = document.querySelectorAll(".book-card");
+    const bookGrid = document.getElementById("bookGrid");
     const noSearch = document.getElementById("noSearch");
 
-    if (searchInput) {
-        searchInput.addEventListener("input", () => {
-            const term = searchInput.value.trim().toLowerCase();
-            let visibleCount = 0;
+    if (searchInput && bookGrid) {
+        const bookCards = Array.from(
+            bookGrid.querySelectorAll(".book-card")
+        );
 
-            bookCards.forEach((card) => {
+        function filterBooks() {
+            const searchText = searchInput.value.trim().toLowerCase();
+            let visibleBooks = 0;
+
+            bookCards.forEach(function (card) {
                 const title = card.dataset.title || "";
                 const author = card.dataset.author || "";
-                const matches = title.includes(term) || author.includes(term);
 
-                card.style.display = matches ? "" : "none";
-                if (matches) visibleCount++;
+                if (
+                    title.includes(searchText) ||
+                    author.includes(searchText)
+                ) {
+                    card.style.display = "";
+                    visibleBooks++;
+                } else {
+                    card.style.display = "none";
+                }
             });
 
             if (noSearch) {
-                noSearch.hidden = visibleCount !== 0;
+                noSearch.hidden = visibleBooks !== 0;
             }
-        });
+        }
+
+        searchInput.addEventListener("input", filterBooks);
     }
 
-    // Ask for confirmation before removing a book.
-    document.querySelectorAll(".remove-form").forEach((form) => {
-        form.addEventListener("submit", (event) => {
-            const confirmed = window.confirm("Remove this book?");
-            if (!confirmed) {
-                event.preventDefault();
-            }
-        });
+    const flashMessages = document.querySelectorAll(".flash");
+
+    flashMessages.forEach(function (message) {
+        setTimeout(function () {
+            message.style.opacity = "0";
+            message.style.transform = "translateY(-10px)";
+            message.style.transition = "all 0.4s ease";
+
+            setTimeout(function () {
+                message.remove();
+            }, 400);
+        }, 4000);
     });
-
-    // Client-side checkout phone validation.
-    const checkoutForm = document.getElementById("checkoutForm");
-    const phoneInput = document.getElementById("phone");
-    const phoneError = document.getElementById("phoneError");
-
-    if (checkoutForm && phoneInput) {
-        checkoutForm.addEventListener("submit", (event) => {
-            const phone = phoneInput.value.trim();
-
-            if (!/^\d{10}$/.test(phone)) {
-                event.preventDefault();
-                if (phoneError) {
-                    phoneError.textContent = "Phone number must be exactly 10 digits.";
-                }
-                phoneInput.focus();
-            } else if (phoneError) {
-                phoneError.textContent = "";
-            }
-        });
-
-        phoneInput.addEventListener("input", () => {
-            phoneInput.value = phoneInput.value.replace(/\D/g, "").slice(0, 10);
-            if (/^\d{10}$/.test(phoneInput.value) && phoneError) {
-                phoneError.textContent = "";
-            }
-        });
-    }
-
-    // Hide green flash messages after 3 seconds.
-    window.setTimeout(() => {
-        document.querySelectorAll(".flash.success").forEach((message) => {
-            message.classList.add("fade-out");
-            window.setTimeout(() => message.remove(), 400);
-        });
-    }, 3000);
-
-    // Simple mobile navbar.
-    const menuToggle = document.getElementById("menuToggle");
-    const navLinks = document.getElementById("navLinks");
-
-    if (menuToggle && navLinks) {
-        menuToggle.addEventListener("click", () => {
-            navLinks.classList.toggle("open");
-        });
-    }
 });
