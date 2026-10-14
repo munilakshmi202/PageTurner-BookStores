@@ -1,0 +1,253 @@
+{% extends "base.html" %}
+
+{% block title %}{{ form_title }} | PageTurner Books{% endblock %}
+
+{% block content %}
+
+<section class="page-section">
+    <div class="container">
+
+        <div
+            style="
+                max-width: 800px;
+                margin: 0 auto;
+            "
+        >
+
+            <div style="margin-bottom: 25px;">
+                <a
+                    href="{{ url_for('admin_dashboard') }}"
+                    style="
+                        color: #4f46e5;
+                        font-weight: 700;
+                    "
+                >
+                    ← Back to Admin Dashboard
+                </a>
+            </div>
+
+            <div
+                class="review-card"
+                style="padding: 35px;"
+            >
+
+                <div
+                    style="
+                        text-align: center;
+                        margin-bottom: 30px;
+                    "
+                >
+
+                    <p class="eyebrow dark">
+                        BOOK MANAGEMENT
+                    </p>
+
+                    <h1>
+                        {{ form_title }}
+                    </h1>
+
+                    <p
+                        style="
+                            color: #64748b;
+                            margin-top: 8px;
+                        "
+                    >
+                        Add or update book information.
+                    </p>
+
+                </div>
+
+                <form
+                    action="{% if book %}{{ url_for('admin_edit_book', book_id=book['id']) }}{% else %}{{ url_for('admin_add_book') }}{% endif %}"
+                    method="post"
+                >
+
+                    <div class="form-group">
+
+                        <label for="title">
+                            Book Title
+                        </label>
+
+                        <input
+                            type="text"
+                            id="title"
+                            name="title"
+                            value="{{ book['title'] if book else '' }}"
+                            placeholder="Enter book title"
+                            required
+                        >
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label for="author">
+                            Author
+                        </label>
+
+                        <input
+                            type="text"
+                            id="author"
+                            name="author"
+                            value="{{ book['author'] if book else '' }}"
+                            placeholder="Enter author name"
+                            required
+                        >
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label for="category">
+                            Category
+                        </label>
+
+                        <input
+                            type="text"
+                            id="category"
+                            name="category"
+                            value="{{ book['category'] if book else '' }}"
+                            placeholder="Example: Fiction, Technology, Science"
+                            required
+                        >
+
+                    </div>
+
+                    <div
+                        style="
+                            display: grid;
+                            grid-template-columns:
+                                repeat(
+                                    auto-fit,
+                                    minmax(200px, 1fr)
+                                );
+                            gap: 18px;
+                        "
+                    >
+
+                        <div class="form-group">
+
+                            <label for="price">
+                                Price
+                            </label>
+
+                            <input
+                                type="number"
+                                id="price"
+                                name="price"
+                                value="{{ book['price'] if book else '' }}"
+                                placeholder="Enter price"
+                                min="0"
+                                step="0.01"
+                                required
+                            >
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label for="stock">
+                                Stock
+                            </label>
+
+                            <input
+                                type="number"
+                                id="stock"
+                                name="stock"
+                                value="{{ book['stock'] if book else '10' }}"
+                                placeholder="Enter stock quantity"
+                                min="0"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label for="cover_color">
+                            Cover Color
+                        </label>
+
+                        <input
+                            type="text"
+                            id="cover_color"
+                            name="cover_color"
+                            value="{{ book['cover_color'] if book else '#4f46e5' }}"
+                            placeholder="Example: #4f46e5"
+                            required
+                        >
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label for="description">
+                            Description
+                        </label>
+
+                        <textarea
+                            id="description"
+                            name="description"
+                            rows="6"
+                            placeholder="Enter book description"
+                        >{{ book['description'] if book else '' }}</textarea>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label for="image">
+                            Image
+                        </label>
+
+                        <input
+                            type="text"
+                            id="image"
+                            name="image"
+                            value="{{ book['image'] if book and book['image'] else '' }}"
+                            placeholder="Enter image filename or URL"
+                        >
+
+                    </div>
+
+                    <div
+                        style="
+                            display: flex;
+                            gap: 12px;
+                            flex-wrap: wrap;
+                            margin-top: 25px;
+                        "
+                    >
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary"
+                        >
+                            {% if book %}
+                                Update Book
+                            {% else %}
+                                Add Book
+                            {% endif %}
+                        </button>
+
+                        <a
+                            href="{{ url_for('admin_dashboard') }}"
+                            class="btn"
+                        >
+                            Cancel
+                        </a>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,534 @@
+{% extends "base.html" %}
+
+{% block title %}
+Admin Dashboard | PageTurner Books
+{% endblock %}
+
+{% block content %}
+
+<style>
+    .admin-page {
+        max-width: 1250px;
+        margin: 0 auto;
+        padding: 45px 25px 70px;
+    }
+
+    .admin-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 30px;
+        margin-bottom: 35px;
+    }
+
+    .admin-title {
+        flex: 1;
+    }
+
+    .admin-title .eyebrow {
+        margin-bottom: 10px;
+        color: #6366f1;
+        font-size: 14px;
+        font-weight: 700;
+        letter-spacing: 3px;
+    }
+
+    .admin-title h1 {
+        margin: 0 0 8px;
+        font-size: 42px;
+        color: #172033;
+    }
+
+    .admin-title p {
+        margin: 0;
+        color: #64748b;
+        font-size: 17px;
+    }
+
+    .admin-actions {
+        display: flex;
+        gap: 12px;
+        flex-shrink: 0;
+    }
+
+    .admin-actions a {
+        text-decoration: none;
+    }
+
+    .admin-summary {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+
+    .admin-summary-card {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 25px;
+        box-shadow: 0 6px 20px rgba(15, 23, 42, 0.06);
+    }
+
+    .summary-label {
+        display: block;
+        color: #64748b;
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+
+    .admin-summary-card strong {
+        display: block;
+        font-size: 32px;
+        color: #172033;
+    }
+
+    .admin-table-card {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 8px 25px rgba(15, 23, 42, 0.07);
+    }
+
+    .admin-table-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        padding: 25px 28px;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .admin-table-header h2 {
+        margin: 0 0 6px;
+        font-size: 24px;
+        color: #172033;
+    }
+
+    .admin-table-header p {
+        margin: 0;
+        color: #64748b;
+        font-size: 14px;
+    }
+
+    .add-book-btn {
+        background: linear-gradient(135deg, #4f46e5, #7c3aed);
+        color: white;
+        text-decoration: none;
+        padding: 12px 20px;
+        border-radius: 10px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .add-book-btn:hover {
+        opacity: 0.9;
+    }
+
+    .table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .admin-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 900px;
+    }
+
+    .admin-table th {
+        background: #f8fafc;
+        color: #475569;
+        font-size: 13px;
+        font-weight: 700;
+        text-align: left;
+        padding: 16px 18px;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .admin-table td {
+        padding: 18px;
+        color: #475569;
+        border-bottom: 1px solid #eef2f7;
+        vertical-align: middle;
+    }
+
+    .admin-table tbody tr:hover {
+        background: #fafbff;
+    }
+
+    .book-title {
+        color: #172033;
+        font-weight: 700;
+    }
+
+    .price {
+        color: #172033;
+        font-weight: 700;
+    }
+
+    .stock-badge {
+        display: inline-block;
+        padding: 6px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .in-stock {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .low-stock {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+    .out-of-stock {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .table-actions {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+    }
+
+    .table-actions form {
+        margin: 0;
+    }
+
+    .edit-btn {
+        background: #eef2ff;
+        color: #4338ca;
+        text-decoration: none;
+        padding: 8px 13px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .delete-btn {
+        background: #fee2e2;
+        color: #b91c1c;
+        border: none;
+        padding: 8px 13px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .empty-table {
+        text-align: center;
+        padding: 40px !important;
+        color: #64748b !important;
+    }
+
+    @media (max-width: 800px) {
+
+        .admin-page {
+            padding: 30px 15px 50px;
+        }
+
+        .admin-top {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .admin-actions {
+            width: 100%;
+        }
+
+        .admin-actions a {
+            flex: 1;
+            text-align: center;
+        }
+
+        .admin-summary {
+            grid-template-columns: 1fr;
+        }
+
+        .admin-table-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .add-book-btn {
+            width: 100%;
+            text-align: center;
+            box-sizing: border-box;
+        }
+    }
+</style>
+
+
+<div class="admin-page">
+
+    <!-- ADMIN HEADER -->
+
+    <div class="admin-top">
+
+        <div class="admin-title">
+
+            <p class="eyebrow">
+                PAGETURNER ADMIN
+            </p>
+
+            <h1>
+                Admin Dashboard
+            </h1>
+
+            <p>
+                Manage books and monitor your bookstore.
+            </p>
+
+        </div>
+
+
+        <div class="admin-actions">
+
+            <a
+                href="{{ url_for('admin_reports') }}"
+                class="btn btn-primary"
+            >
+                View Reports
+            </a>
+
+            <a
+                href="{{ url_for('admin_logout') }}"
+                class="btn btn-secondary"
+            >
+                Logout
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- SUMMARY CARDS -->
+
+    <div class="admin-summary">
+
+        <div class="admin-summary-card">
+
+            <span class="summary-label">
+                Total Books
+            </span>
+
+            <strong>
+                {{ books|length }}
+            </strong>
+
+        </div>
+
+
+        <div class="admin-summary-card">
+
+            <span class="summary-label">
+                Available Books
+            </span>
+
+            <strong>
+                {{ books|selectattr('stock', 'gt', 0)|list|length }}
+            </strong>
+
+        </div>
+
+
+        <div class="admin-summary-card">
+
+            <span class="summary-label">
+                Out of Stock
+            </span>
+
+            <strong>
+                {{ books|selectattr('stock', 'equalto', 0)|list|length }}
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <!-- BOOK MANAGEMENT -->
+
+    <div class="admin-table-card">
+
+        <div class="admin-table-header">
+
+            <div>
+
+                <h2>
+                    Manage Books
+                </h2>
+
+                <p>
+                    Add, edit or delete books from your bookstore.
+                </p>
+
+            </div>
+
+
+            <a
+                href="{{ url_for('admin_add_book') }}"
+                class="add-book-btn"
+            >
+                + Add New Book
+            </a>
+
+        </div>
+
+
+        <div class="table-wrapper">
+
+            <table class="admin-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>ID</th>
+
+                        <th>Book</th>
+
+                        <th>Author</th>
+
+                        <th>Category</th>
+
+                        <th>Price</th>
+
+                        <th>Stock</th>
+
+                        <th>Actions</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for book in books %}
+
+                    <tr>
+
+                        <td>
+                            {{ book['id'] }}
+                        </td>
+
+
+                        <td>
+                            <span class="book-title">
+                                {{ book['title'] }}
+                            </span>
+                        </td>
+
+
+                        <td>
+                            {{ book['author'] }}
+                        </td>
+
+
+                        <td>
+                            {{ book['category'] }}
+                        </td>
+
+
+                        <td>
+                            <span class="price">
+                                ₹{{ "%.2f"|format(book['price']) }}
+                            </span>
+                        </td>
+
+
+                        <td>
+
+                            {% if book['stock'] == 0 %}
+
+                            <span class="stock-badge out-of-stock">
+                                Out of Stock
+                            </span>
+
+                            {% elif book['stock'] <= 3 %}
+
+                            <span class="stock-badge low-stock">
+                                {{ book['stock'] }} left
+                            </span>
+
+                            {% else %}
+
+                            <span class="stock-badge in-stock">
+                                {{ book['stock'] }}
+                            </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <td>
+
+                            <div class="table-actions">
+
+                                <a
+                                    href="{{ url_for('admin_edit_book', book_id=book['id']) }}"
+                                    class="edit-btn"
+                                >
+                                    Edit
+                                </a>
+
+
+                                <form
+                                    action="{{ url_for('admin_delete_book', book_id=book['id']) }}"
+                                    method="post"
+                                    onsubmit="return confirm('Are you sure you want to delete this book?');"
+                                >
+
+                                    <button
+                                        type="submit"
+                                        class="delete-btn"
+                                    >
+                                        Delete
+                                    </button>
+
+                                </form>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+
+                    {% else %}
+
+                    <tr>
+
+                        <td
+                            colspan="7"
+                            class="empty-table"
+                        >
+                            No books found.
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

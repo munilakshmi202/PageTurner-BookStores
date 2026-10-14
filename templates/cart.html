@@ -1,0 +1,968 @@
+{% extends "base.html" %}
+
+{% block title %}Cart | PageTurner Books{% endblock %}
+
+{% block content %}
+
+<section class="page-section">
+
+    <div class="container">
+
+        <div class="section-heading">
+
+            <div>
+                <p class="eyebrow dark">
+                    YOUR SHOPPING CART
+                </p>
+
+                <h1>My Cart</h1>
+
+                <p style="color:#64748b; margin-top:8px;">
+                    Review your books before checkout.
+                </p>
+            </div>
+
+        </div>
+
+
+        {% if items %}
+
+        <div class="cart-layout">
+
+            <!-- =================================================
+                 CART ITEMS
+            ================================================== -->
+
+            <div class="cart-items">
+
+                {% for item in items %}
+
+                <div class="cart-item">
+
+                    <!-- BOOK IMAGE -->
+
+                    <a
+                        href="{{ url_for('book_detail', book_id=item['book']['id']) }}"
+                        class="cart-image-link"
+                    >
+
+                        {% if item['book']['image'] %}
+
+                        <img
+                            src="{{ item['book']['image'] }}"
+                            alt="{{ item['book']['title'] }}"
+                            class="cart-book-image"
+                            loading="lazy"
+                            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                        >
+
+                        <div
+                            class="cart-fallback"
+                            style="
+                                --cover: {{ item['book']['cover_color'] or '#4f46e5' }};
+                                display:none;
+                            "
+                        >
+                            📚
+                        </div>
+
+                        {% else %}
+
+                        <div
+                            class="cart-fallback"
+                            style="
+                                --cover: {{ item['book']['cover_color'] or '#4f46e5' }};
+                            "
+                        >
+                            📚
+                        </div>
+
+                        {% endif %}
+
+                    </a>
+
+
+                    <!-- BOOK DETAILS -->
+
+                    <div class="cart-book-details">
+
+                        <span class="cart-category">
+                            {{ item['book']['category'] }}
+                        </span>
+
+                        <h3>
+                            {{ item['book']['title'] }}
+                        </h3>
+
+                        <p>
+                            by {{ item['book']['author'] }}
+                        </p>
+
+                        <strong class="cart-price">
+                            ₹{{ '%.2f'|format(item['book']['price']) }}
+                        </strong>
+
+                    </div>
+
+
+                    <!-- QUANTITY -->
+
+                    <div class="cart-quantity">
+
+                        <form
+                            action="{{ url_for('update_cart', book_id=item['book']['id']) }}"
+                            method="post"
+                        >
+
+                            <label>
+                                Quantity
+                            </label>
+
+                            <input
+                                type="number"
+                                name="quantity"
+                                value="{{ item['quantity'] }}"
+                                min="1"
+                                max="{{ item['book']['stock'] }}"
+                            >
+
+                            <button
+                                type="submit"
+                                class="btn small"
+                            >
+                                Update
+                            </button>
+
+                        </form>
+
+                    </div>
+
+
+                    <!-- SUBTOTAL -->
+
+                    <div class="cart-item-total">
+
+                        <span>
+                            Subtotal
+                        </span>
+
+                        <strong>
+                            ₹{{ '%.2f'|format(item['item_total']) }}
+                        </strong>
+
+                    </div>
+
+
+                    <!-- REMOVE -->
+
+                    <div class="cart-remove">
+
+                        <form
+                            action="{{ url_for('remove_from_cart', book_id=item['book']['id']) }}"
+                            method="post"
+                        >
+
+                            <button
+                                type="submit"
+                                class="remove-btn"
+                                title="Remove from cart"
+                            >
+                                ×
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+
+            <!-- =================================================
+                 ORDER SUMMARY
+            ================================================== -->
+
+            <aside class="cart-summary">
+
+                <h2>
+                    Order Summary
+                </h2>
+
+
+                <!-- SUBTOTAL -->
+
+                <div class="summary-row">
+
+                    <span>
+                        Subtotal
+                    </span>
+
+                    <strong>
+                        ₹{{ '%.2f'|format(subtotal) }}
+                    </strong>
+
+                </div>
+
+
+                <!-- COUPON -->
+
+                <div class="coupon-section">
+
+                    <h4>
+                        Apply Coupon
+                    </h4>
+
+                    {% if coupon_code %}
+
+                    <div class="coupon-applied">
+
+                        <div>
+
+                            <strong>
+                                {{ coupon_code }}
+                            </strong>
+
+                            <span>
+                                {{ discount_percent }}% OFF
+                            </span>
+
+                        </div>
+
+                        <form
+                            action="{{ url_for('remove_coupon') }}"
+                            method="post"
+                        >
+
+                            <button
+                                type="submit"
+                                class="remove-coupon"
+                            >
+                                Remove
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                    {% else %}
+
+                    <form
+                        action="{{ url_for('apply_coupon') }}"
+                        method="post"
+                        class="coupon-form"
+                    >
+
+                        <input
+                            type="text"
+                            name="coupon_code"
+                            placeholder="Enter coupon code"
+                            required
+                        >
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary"
+                        >
+                            Apply
+                        </button>
+
+                    </form>
+
+                    <p class="coupon-hint">
+                        Try:
+                        <strong>SAVE10</strong>,
+                        <strong>SAVE20</strong>
+                        or
+                        <strong>WELCOME15</strong>
+                    </p>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- DISCOUNT -->
+
+                {% if discount_amount > 0 %}
+
+                <div class="summary-row discount-row">
+
+                    <span>
+                        Discount
+                        {% if discount_percent %}
+                            ({{ discount_percent }}%)
+                        {% endif %}
+                    </span>
+
+                    <strong>
+                        -₹{{ '%.2f'|format(discount_amount) }}
+                    </strong>
+
+                </div>
+
+                {% endif %}
+
+
+                <!-- TOTAL -->
+
+                <div class="summary-divider"></div>
+
+                <div class="summary-row total-row">
+
+                    <span>
+                        Grand Total
+                    </span>
+
+                    <strong>
+                        ₹{{ '%.2f'|format(total) }}
+                    </strong>
+
+                </div>
+
+
+                <!-- CHECKOUT -->
+
+                <a
+                    href="{{ url_for('checkout') }}"
+                    class="btn btn-primary checkout-btn"
+                >
+                    Proceed to Checkout
+                </a>
+
+
+                <!-- CONTINUE SHOPPING -->
+
+                <a
+                    href="{{ url_for('home') }}"
+                    class="continue-shopping"
+                >
+                    ← Continue Shopping
+                </a>
+
+            </aside>
+
+        </div>
+
+
+        {% else %}
+
+        <!-- =================================================
+             EMPTY CART
+        ================================================== -->
+
+        <div class="empty-cart">
+
+            <div class="empty-cart-icon">
+                🛒
+            </div>
+
+            <h2>
+                Your Cart is Empty
+            </h2>
+
+            <p>
+                You haven't added any books to your cart yet.
+            </p>
+
+            <a
+                href="{{ url_for('home') }}"
+                class="btn btn-primary"
+            >
+                Browse Books
+            </a>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     STYLES
+========================================================= -->
+
+<style>
+
+    .page-section {
+        padding: 60px 0 80px;
+    }
+
+
+    .cart-layout {
+        display: grid;
+        grid-template-columns:
+            minmax(0, 1fr) 360px;
+        gap: 30px;
+        margin-top: 35px;
+        align-items: start;
+    }
+
+
+    /* ========================================================
+       CART ITEMS
+    ======================================================== */
+
+    .cart-items {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+
+    .cart-item {
+        display: grid;
+        grid-template-columns:
+            100px
+            minmax(180px, 1fr)
+            120px
+            120px
+            40px;
+
+        gap: 18px;
+
+        align-items: center;
+
+        background: white;
+
+        border: 1px solid #e2e8f0;
+
+        border-radius: 14px;
+
+        padding: 15px;
+
+        box-sizing: border-box;
+    }
+
+
+    /* ========================================================
+       IMAGE
+    ======================================================== */
+
+    .cart-image-link {
+        width: 100px;
+        height: 130px;
+        display: block;
+        overflow: hidden;
+        border-radius: 8px;
+        background: #f8fafc;
+    }
+
+
+    .cart-book-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+
+    .cart-fallback {
+        width: 100%;
+        height: 100%;
+
+        display: flex;
+
+        justify-content: center;
+        align-items: center;
+
+        background:
+            linear-gradient(
+                145deg,
+                var(--cover),
+                #111827
+            );
+
+        color: white;
+
+        font-size: 38px;
+    }
+
+
+    /* ========================================================
+       BOOK DETAILS
+    ======================================================== */
+
+    .cart-category {
+        display: inline-block;
+
+        padding: 5px 8px;
+
+        border-radius: 6px;
+
+        background: #eef2ff;
+
+        color: #4f46e5;
+
+        font-size: 11px;
+
+        font-weight: 600;
+    }
+
+
+    .cart-book-details h3 {
+        margin: 8px 0 4px;
+
+        color: #0f172a;
+
+        font-size: 17px;
+
+        line-height: 1.3;
+    }
+
+
+    .cart-book-details p {
+        margin: 0 0 8px;
+
+        color: #64748b;
+
+        font-size: 13px;
+    }
+
+
+    .cart-price {
+        color: #0f172a;
+    }
+
+
+    /* ========================================================
+       QUANTITY
+    ======================================================== */
+
+    .cart-quantity form {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+    }
+
+
+    .cart-quantity label {
+        color: #64748b;
+        font-size: 12px;
+    }
+
+
+    .cart-quantity input {
+        width: 80px;
+
+        padding: 8px;
+
+        border: 1px solid #cbd5e1;
+
+        border-radius: 7px;
+
+        outline: none;
+
+        box-sizing: border-box;
+    }
+
+
+    .cart-quantity input:focus {
+        border-color: #6366f1;
+    }
+
+
+    /* ========================================================
+       ITEM TOTAL
+    ======================================================== */
+
+    .cart-item-total {
+        display: flex;
+
+        flex-direction: column;
+
+        gap: 5px;
+
+        text-align: right;
+    }
+
+
+    .cart-item-total span {
+        color: #64748b;
+        font-size: 12px;
+    }
+
+
+    .cart-item-total strong {
+        color: #0f172a;
+        font-size: 17px;
+    }
+
+
+    /* ========================================================
+       REMOVE
+    ======================================================== */
+
+    .remove-btn {
+        width: 35px;
+        height: 35px;
+
+        border: 1px solid #fecaca;
+
+        border-radius: 8px;
+
+        background: #fff1f2;
+
+        color: #dc2626;
+
+        font-size: 24px;
+
+        line-height: 1;
+
+        cursor: pointer;
+    }
+
+
+    .remove-btn:hover {
+        background: #fee2e2;
+    }
+
+
+    /* ========================================================
+       SUMMARY
+    ======================================================== */
+
+    .cart-summary {
+        background: white;
+
+        border: 1px solid #e2e8f0;
+
+        border-radius: 16px;
+
+        padding: 25px;
+
+        position: sticky;
+
+        top: 20px;
+    }
+
+
+    .cart-summary h2 {
+        margin-top: 0;
+
+        margin-bottom: 22px;
+
+        color: #0f172a;
+    }
+
+
+    .summary-row {
+        display: flex;
+
+        justify-content: space-between;
+
+        gap: 15px;
+
+        margin-bottom: 15px;
+
+        color: #475569;
+    }
+
+
+    .summary-row strong {
+        color: #0f172a;
+    }
+
+
+    .discount-row {
+        color: #16a34a;
+    }
+
+
+    .discount-row strong {
+        color: #16a34a;
+    }
+
+
+    .summary-divider {
+        height: 1px;
+
+        background: #e2e8f0;
+
+        margin: 20px 0;
+    }
+
+
+    .total-row {
+        font-size: 18px;
+    }
+
+
+    .total-row strong {
+        color: #4f46e5;
+        font-size: 22px;
+    }
+
+
+    /* ========================================================
+       COUPON
+    ======================================================== */
+
+    .coupon-section {
+        margin: 20px 0;
+    }
+
+
+    .coupon-section h4 {
+        margin: 0 0 10px;
+
+        color: #0f172a;
+    }
+
+
+    .coupon-form {
+        display: flex;
+
+        gap: 8px;
+    }
+
+
+    .coupon-form input {
+        min-width: 0;
+
+        flex: 1;
+
+        padding: 10px;
+
+        border: 1px solid #cbd5e1;
+
+        border-radius: 8px;
+
+        outline: none;
+    }
+
+
+    .coupon-form input:focus {
+        border-color: #6366f1;
+    }
+
+
+    .coupon-form button {
+        white-space: nowrap;
+    }
+
+
+    .coupon-hint {
+        margin: 9px 0 0;
+
+        color: #94a3b8;
+
+        font-size: 11px;
+
+        line-height: 1.5;
+    }
+
+
+    .coupon-hint strong {
+        color: #4f46e5;
+    }
+
+
+    .coupon-applied {
+        display: flex;
+
+        justify-content: space-between;
+
+        align-items: center;
+
+        gap: 10px;
+
+        padding: 12px;
+
+        background: #f0fdf4;
+
+        border: 1px solid #bbf7d0;
+
+        border-radius: 9px;
+    }
+
+
+    .coupon-applied div {
+        display: flex;
+
+        flex-direction: column;
+
+        gap: 3px;
+    }
+
+
+    .coupon-applied strong {
+        color: #15803d;
+    }
+
+
+    .coupon-applied span {
+        color: #16a34a;
+
+        font-size: 12px;
+    }
+
+
+    .remove-coupon {
+        border: none;
+
+        background: transparent;
+
+        color: #dc2626;
+
+        cursor: pointer;
+
+        font-size: 12px;
+
+        font-weight: 600;
+    }
+
+
+    /* ========================================================
+       CHECKOUT
+    ======================================================== */
+
+    .checkout-btn {
+        display: block;
+
+        width: 100%;
+
+        text-align: center;
+
+        box-sizing: border-box;
+
+        margin-top: 20px;
+    }
+
+
+    .continue-shopping {
+        display: block;
+
+        text-align: center;
+
+        margin-top: 15px;
+
+        color: #4f46e5;
+
+        text-decoration: none;
+
+        font-size: 14px;
+    }
+
+
+    .continue-shopping:hover {
+        text-decoration: underline;
+    }
+
+
+    /* ========================================================
+       EMPTY CART
+    ======================================================== */
+
+    .empty-cart {
+        max-width: 650px;
+
+        margin: 50px auto;
+
+        padding: 60px 30px;
+
+        text-align: center;
+
+        background: white;
+
+        border: 1px solid #e2e8f0;
+
+        border-radius: 16px;
+    }
+
+
+    .empty-cart-icon {
+        font-size: 65px;
+
+        margin-bottom: 15px;
+    }
+
+
+    .empty-cart h2 {
+        color: #0f172a;
+
+        margin-bottom: 8px;
+    }
+
+
+    .empty-cart p {
+        color: #64748b;
+
+        margin-bottom: 25px;
+    }
+
+
+    /* ========================================================
+       RESPONSIVE
+    ======================================================== */
+
+    @media (max-width: 1000px) {
+
+        .cart-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .cart-summary {
+            position: static;
+        }
+
+    }
+
+
+    @media (max-width: 750px) {
+
+        .cart-item {
+            grid-template-columns:
+                80px
+                1fr
+                40px;
+
+            gap: 12px;
+        }
+
+        .cart-image-link {
+            width: 80px;
+            height: 105px;
+        }
+
+        .cart-quantity {
+            grid-column: 2;
+        }
+
+        .cart-item-total {
+            grid-column: 2;
+            text-align: left;
+        }
+
+        .cart-remove {
+            grid-column: 3;
+            grid-row: 1;
+        }
+
+    }
+
+
+    @media (max-width: 500px) {
+
+        .cart-summary {
+            padding: 18px;
+        }
+
+        .coupon-form {
+            flex-direction: column;
+        }
+
+        .coupon-form button {
+            width: 100%;
+        }
+
+    }
+
+</style>
+
+{% endblock %}

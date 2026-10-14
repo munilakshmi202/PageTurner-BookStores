@@ -1,0 +1,293 @@
+{% extends "base.html" %}
+
+{% block title %}Find My Order | PageTurner Books{% endblock %}
+
+{% block content %}
+
+<section class="page-section">
+
+    <div class="container">
+
+        <div style="text-align:center; margin-bottom:40px;">
+
+            <p class="eyebrow dark">
+                ORDER TRACKING
+            </p>
+
+            <h1>
+                Find My Order
+            </h1>
+
+            <p style="color:#64748b; margin-top:12px;">
+                Enter the phone number used while placing your order
+                to view your previous orders.
+            </p>
+
+        </div>
+
+
+        <!-- FIND ORDER FORM -->
+
+        <div
+            class="login-card"
+            style="
+                max-width:900px;
+                margin:0 auto;
+                padding:35px;
+            "
+        >
+
+            <form
+                action="{{ url_for('find_order') }}"
+                method="POST"
+            >
+
+                <div class="form-group">
+
+                    <label for="phone">
+                        Phone Number
+                    </label>
+
+                    <input
+                        type="tel"
+                        id="phone"
+                        name="phone"
+                        placeholder="Enter your 10 digit phone number"
+                        inputmode="numeric"
+                        autocomplete="tel"
+                        maxlength="10"
+                        minlength="10"
+                        pattern="[0-9]{10}"
+                        required
+                    >
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                    style="
+                        width:100%;
+                        margin-top:10px;
+                    "
+                >
+                    Find My Orders
+                </button>
+
+            </form>
+
+        </div>
+
+
+        <!-- ORDER RESULTS -->
+
+        {% if orders %}
+
+        <div style="margin-top:40px;">
+
+            <h2 style="margin-bottom:20px;">
+                Your Orders
+            </h2>
+
+
+            {% for order in orders %}
+
+            <div
+                class="login-card"
+                style="
+                    margin-bottom:20px;
+                    padding:25px;
+                "
+            >
+
+                <div
+                    style="
+                        display:flex;
+                        justify-content:space-between;
+                        gap:20px;
+                        flex-wrap:wrap;
+                    "
+                >
+
+                    <div>
+
+                        <p
+                            style="
+                                color:#64748b;
+                                font-size:14px;
+                                margin-bottom:5px;
+                            "
+                        >
+                            Order ID
+                        </p>
+
+                        <h3>
+                            #{{ order['id'] }}
+                        </h3>
+
+                        <p
+                            style="
+                                color:#64748b;
+                                margin-top:6px;
+                            "
+                        >
+                            {{ order['created_at'] }}
+                        </p>
+
+                    </div>
+
+
+                    <div>
+
+                        <p
+                            style="
+                                color:#64748b;
+                                font-size:14px;
+                                margin-bottom:5px;
+                            "
+                        >
+                            Total Amount
+                        </p>
+
+                        <strong class="price">
+                            ₹{{ '%.2f'|format(order['total']) }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <hr style="margin:20px 0;">
+
+
+                <div
+                    style="
+                        display:grid;
+                        grid-template-columns:
+                        repeat(auto-fit, minmax(200px, 1fr));
+                        gap:18px;
+                    "
+                >
+
+                    <div>
+
+                        <p
+                            style="
+                                color:#64748b;
+                                font-size:14px;
+                            "
+                        >
+                            Customer
+                        </p>
+
+                        <strong>
+                            {{ order['customer_name'] }}
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <p
+                            style="
+                                color:#64748b;
+                                font-size:14px;
+                            "
+                        >
+                            Phone
+                        </p>
+
+                        <strong>
+                            {{ order['phone'] }}
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <p
+                            style="
+                                color:#64748b;
+                                font-size:14px;
+                            "
+                        >
+                            Discount
+                        </p>
+
+                        <strong>
+                            ₹{{ '%.2f'|format(order['discount']) }}
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <p
+                            style="
+                                color:#64748b;
+                                font-size:14px;
+                            "
+                        >
+                            Total
+                        </p>
+
+                        <strong>
+                            ₹{{ '%.2f'|format(order['total']) }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div style="margin-top:20px;">
+
+                    <p
+                        style="
+                            color:#64748b;
+                            font-size:14px;
+                            margin-bottom:6px;
+                        "
+                    >
+                        Delivery Address
+                    </p>
+
+                    <p style="line-height:1.7;">
+                        {{ order['address'] }}
+                    </p>
+
+                </div>
+
+
+                <div style="margin-top:22px;">
+
+                    <a
+                        href="{{ url_for(
+                            'order_detail',
+                            order_id=order['id']
+                        ) }}"
+                        class="btn btn-primary"
+                    >
+                        View Order Details
+                    </a>
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</section>
+
+{% endblock %}

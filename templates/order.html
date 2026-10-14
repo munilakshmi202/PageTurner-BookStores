@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+
+{% block title %}
+Order Confirmation | PageTurner Books
+{% endblock %}
+
+{% block content %}
+
+<section class="container page-section">
+
+    <div class="order-confirmation">
+
+        <div class="success-icon">
+            ✓
+        </div>
+
+        <p class="eyebrow dark">
+            PAGETURNER
+        </p>
+
+        <h1>
+            Order Placed Successfully
+        </h1>
+
+        <p class="success-message">
+            Thank you for shopping with PageTurner Books.
+            Your order has been successfully placed.
+        </p>
+
+        <div class="order-details-card">
+
+            <div class="order-detail-row">
+                <span>Order ID</span>
+                <strong>
+                    #{{ order['id'] }}
+                </strong>
+            </div>
+
+            <div class="order-detail-row">
+                <span>Customer Name</span>
+                <strong>
+                    {{ order['customer_name'] }}
+                </strong>
+            </div>
+
+            <div class="order-detail-row">
+                <span>Phone</span>
+                <strong>
+                    {{ order['phone'] }}
+                </strong>
+            </div>
+
+            <div class="order-detail-row">
+                <span>Delivery Address</span>
+                <strong>
+                    {{ order['address'] }}
+                </strong>
+            </div>
+
+            <div class="order-detail-row">
+                <span>Order Date</span>
+                <strong>
+                    {{ order['created_at'] }}
+                </strong>
+            </div>
+
+        </div>
+
+        <div class="ordered-books">
+
+            <h2>
+                Ordered Books
+            </h2>
+
+            {% for item in items %}
+
+            <div class="ordered-book">
+
+                <div class="ordered-book-info">
+
+                    <h3>
+                        {{ item['title'] }}
+                    </h3>
+
+                    <p>
+                        {{ item['author'] }}
+                    </p>
+
+                    <span>
+                        Quantity: {{ item['quantity'] }}
+                    </span>
+
+                </div>
+
+                <div class="ordered-book-price">
+
+                    ₹{{ "%.2f"|format(item['price'] * item['quantity']) }}
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        <div class="order-total">
+
+            <span>
+                Total Amount
+            </span>
+
+            <strong>
+                ₹{{ "%.2f"|format(order['total']) }}
+            </strong>
+
+        </div>
+
+        <div class="order-actions">
+
+            <a
+                href="{{ url_for('home') }}"
+                class="btn btn-primary"
+            >
+                Continue Shopping
+            </a>
+
+            <a
+                href="{{ url_for('find_order') }}"
+                class="btn btn-secondary"
+            >
+                Find My Order
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

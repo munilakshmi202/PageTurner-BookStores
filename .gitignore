@@ -1,6 +1,15 @@
+<<<<<<< HEAD
 ﻿venv/
 .venv/
 __pycache__/
 *.pyc
 .env
 instance/
+=======
+__pycache__/
+*.pyc
+.venv/
+venv/
+bookstore.db
+.env
+>>>>>>> 1ae86f74bb1d3078f76d9a3b07b0114531db70d0

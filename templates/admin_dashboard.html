@@ -1,0 +1,354 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard | PageTurner Books{% endblock %}
+
+{% block content %}
+
+<section class="page-section">
+    <div class="container">
+
+        <div class="section-heading">
+            <div>
+                <p class="eyebrow dark">ADMINISTRATION</p>
+                <h1>Admin Dashboard</h1>
+                <p style="color: #64748b; margin-top: 8px;">
+                    Manage your PageTurner Books store.
+                </p>
+            </div>
+
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <a href="{{ url_for('admin_reports') }}" class="btn">
+                    Reports
+                </a>
+
+                <a href="{{ url_for('admin_logout') }}" class="btn">
+                    Logout
+                </a>
+            </div>
+        </div>
+
+        <div
+            style="
+                display: grid;
+                grid-template-columns: repeat(
+                    auto-fit,
+                    minmax(200px, 1fr)
+                );
+                gap: 20px;
+                margin-bottom: 35px;
+            "
+        >
+
+            <div class="review-card">
+                <p
+                    style="
+                        color: #64748b;
+                        font-size: 14px;
+                    "
+                >
+                    Total Books
+                </p>
+
+                <h2 style="margin-top: 8px;">
+                    {{ total_books }}
+                </h2>
+            </div>
+
+            <div class="review-card">
+                <p
+                    style="
+                        color: #64748b;
+                        font-size: 14px;
+                    "
+                >
+                    Total Orders
+                </p>
+
+                <h2 style="margin-top: 8px;">
+                    {{ total_orders }}
+                </h2>
+            </div>
+
+            <div class="review-card">
+                <p
+                    style="
+                        color: #64748b;
+                        font-size: 14px;
+                    "
+                >
+                    Total Users
+                </p>
+
+                <h2 style="margin-top: 8px;">
+                    {{ total_users }}
+                </h2>
+            </div>
+
+            <div class="review-card">
+                <p
+                    style="
+                        color: #64748b;
+                        font-size: 14px;
+                    "
+                >
+                    Revenue
+                </p>
+
+                <h2 style="margin-top: 8px;">
+                    ₹{{ '%.2f'|format(total_revenue) }}
+                </h2>
+            </div>
+
+        </div>
+
+        <div class="section-heading">
+            <div>
+                <p class="eyebrow dark">BOOK MANAGEMENT</p>
+                <h2>Books</h2>
+            </div>
+
+            <a
+                href="{{ url_for('admin_add_book') }}"
+                class="btn btn-primary"
+            >
+                + Add New Book
+            </a>
+        </div>
+
+        {% if books %}
+
+        <div
+            style="
+                overflow-x: auto;
+                background: white;
+                border-radius: 18px;
+                padding: 10px;
+                box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+            "
+        >
+
+            <table
+                style="
+                    width: 100%;
+                    border-collapse: collapse;
+                    min-width: 850px;
+                "
+            >
+
+                <thead>
+
+                    <tr style="border-bottom: 2px solid #e2e8f0;">
+
+                        <th
+                            style="
+                                text-align: left;
+                                padding: 15px;
+                            "
+                        >
+                            Book
+                        </th>
+
+                        <th
+                            style="
+                                text-align: left;
+                                padding: 15px;
+                            "
+                        >
+                            Author
+                        </th>
+
+                        <th
+                            style="
+                                text-align: left;
+                                padding: 15px;
+                            "
+                        >
+                            Category
+                        </th>
+
+                        <th
+                            style="
+                                text-align: left;
+                                padding: 15px;
+                            "
+                        >
+                            Price
+                        </th>
+
+                        <th
+                            style="
+                                text-align: left;
+                                padding: 15px;
+                            "
+                        >
+                            Stock
+                        </th>
+
+                        <th
+                            style="
+                                text-align: left;
+                                padding: 15px;
+                            "
+                        >
+                            Actions
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for book in books %}
+
+                    <tr
+                        style="
+                            border-bottom: 1px solid #e2e8f0;
+                        "
+                    >
+
+                        <td style="padding: 15px;">
+                            <strong>
+                                {{ book['title'] }}
+                            </strong>
+                        </td>
+
+                        <td style="padding: 15px;">
+                            {{ book['author'] }}
+                        </td>
+
+                        <td style="padding: 15px;">
+                            {{ book['category'] }}
+                        </td>
+
+                        <td style="padding: 15px;">
+                            ₹{{ '%.2f'|format(book['price']) }}
+                        </td>
+
+                        <td style="padding: 15px;">
+
+                            {% if book['stock'] > 0 %}
+
+                            <span
+                                style="
+                                    color: #15803d;
+                                    font-weight: 700;
+                                "
+                            >
+                                {{ book['stock'] }}
+                            </span>
+
+                            {% else %}
+
+                            <span
+                                style="
+                                    color: #dc2626;
+                                    font-weight: 700;
+                                "
+                            >
+                                Out of Stock
+                            </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td
+                            style="
+                                padding: 15px;
+                                display: flex;
+                                gap: 8px;
+                                flex-wrap: wrap;
+                            "
+                        >
+
+                            <a
+                                href="{{ url_for(
+                                    'admin_edit_book',
+                                    book_id=book['id']
+                                ) }}"
+                                class="btn small"
+                            >
+                                Edit
+                            </a>
+
+                            <form
+                                action="{{ url_for(
+                                    'admin_delete_book',
+                                    book_id=book['id']
+                                ) }}"
+                                method="post"
+                                onsubmit="return confirm(
+                                    'Are you sure you want to delete this book?'
+                                );"
+                            >
+
+                                <button
+                                    type="submit"
+                                    class="btn small"
+                                >
+                                    Delete
+                                </button>
+
+                            </form>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        {% else %}
+
+        <div
+            class="review-card"
+            style="
+                text-align: center;
+                padding: 50px 25px;
+            "
+        >
+
+            <div
+                style="
+                    font-size: 55px;
+                    margin-bottom: 15px;
+                "
+            >
+                📚
+            </div>
+
+            <h2>
+                No Books Found
+            </h2>
+
+            <p
+                style="
+                    color: #64748b;
+                    margin-top: 10px;
+                "
+            >
+                Add your first book to the store.
+            </p>
+
+            <a
+                href="{{ url_for('admin_add_book') }}"
+                class="btn btn-primary"
+                style="margin-top: 20px;"
+            >
+                Add Book
+            </a>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+</section>
+
+{% endblock %}
